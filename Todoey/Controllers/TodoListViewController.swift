@@ -50,15 +50,18 @@ class TodoListViewController: UITableViewController {
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         self.saveItems()
-        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     // Trailing Swipe
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // delete
-        let delete = UIContextualAction(style: .normal, title: "Delete") { action, view, completionHandler in
+        let delete = UIContextualAction(style: .normal, title: "Delete") {[weak self] action, view, completionHandler in
+            guard let self = self else { return }
             print("Delete: \(indexPath.row + 1)")
+            self.context.delete(self.itemArray[indexPath.row])
+            self.itemArray.remove(at: indexPath.row)
+            self.saveItems()
             completionHandler(true)
         }
         delete.image = UIImage(systemName: "trash")
