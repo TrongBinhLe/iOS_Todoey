@@ -18,9 +18,7 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//         print(dataFilePath)
         loadItem()
-        // Do any additional setup after loading the view.
     }
     
     override func didReceiveMemoryWarning() {
@@ -157,7 +155,7 @@ class TodoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func loadItem() {
+    func loadItem(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
 //        if let data = try? Data(contentsOf: dataFilePath!) {
 //            let decoder = PropertyListDecoder()
 //            do {
@@ -166,14 +164,31 @@ class TodoListViewController: UITableViewController {
 //                print("Error decoding item array.. \(error)")
 //            }
 //        }
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        do{
+        do{ 
         itemArray = try context.fetch(request)
         } catch {
             print("Error fetching data \(error)")
         }
+        self.tableView.reloadData()
     }
     
+}
+
+// MARK: -Search bar methods.
+
+extension TodoListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        print(searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        
+        request.sortDescriptors = [sortDescriptor]
+        
+        loadItem(with: request)
+    }
 }
 
 
