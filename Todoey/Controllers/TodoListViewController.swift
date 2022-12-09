@@ -164,7 +164,7 @@ class TodoListViewController: UITableViewController {
 //                print("Error decoding item array.. \(error)")
 //            }
 //        }
-        do{ 
+        do{
         itemArray = try context.fetch(request)
         } catch {
             print("Error fetching data \(error)")
@@ -188,6 +188,15 @@ extension TodoListViewController: UISearchBarDelegate {
         request.sortDescriptors = [sortDescriptor]
         
         loadItem(with: request)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItem()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
     }
 }
 
