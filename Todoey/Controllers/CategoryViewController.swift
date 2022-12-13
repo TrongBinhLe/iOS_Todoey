@@ -74,8 +74,24 @@ class CategoryViewController: UITableViewController {
 
     
     //MARK: -TableView Delegate Methods
-    
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//    }
+        
+    //Trailing Swipe
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let delete = UIContextualAction(style: .normal, title: "Delete") { [weak self] action, view, completionHandler in
+            guard let self = self else { return }
+            print("Delete: \(indexPath.row + 1)")
+            self.context.delete(self.categories[indexPath.row])
+            self.categories.remove(at: indexPath.row)
+            self.saveCategories()
+            completionHandler(true)
+        }
+        
+        delete.image = UIImage(systemName: "trash")
+        delete.backgroundColor = .red
+        
+        let swipe = UISwipeActionsConfiguration(actions: [delete])
+        return swipe
+    }
+        
+
 }
