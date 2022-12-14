@@ -8,9 +8,14 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
+    
+    let realm = try! Realm()
+    
     var categories = [Category]()
+    var categoriesRealm = [CategoryRealm]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
@@ -27,8 +32,12 @@ class CategoryViewController: UITableViewController {
         let action = UIAlertAction(title: "Add", style: .default) { action in
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
+            let newCategoryRealm = CategoryRealm()
+            newCategoryRealm.name = textField.text!
             self.categories.append(newCategory)
+            self.categoriesRealm.append(newCategoryRealm)
             self.saveCategories()
+            self.save(category: newCategoryRealm)
         }
         alert.addAction(action)
         alert.addTextField { field in
@@ -56,6 +65,17 @@ class CategoryViewController: UITableViewController {
             try context.save()
         }catch {
             print("Error saving categories \(error)")
+        }
+        tableView.reloadData()
+    }
+    
+    func save(category: CategoryRealm) {
+        do {
+            try realm.write({
+                realm.add(category)
+            })
+        } catch let error as NSError {
+            print("Error saving the data into Realm, \(error)")
         }
         tableView.reloadData()
     }
