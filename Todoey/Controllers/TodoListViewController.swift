@@ -82,10 +82,20 @@ class TodoListViewController: UITableViewController {
         let delete = UIContextualAction(style: .normal, title: "Delete") {[weak self] action, view, completionHandler in
             guard let self = self else { return }
             print("Delete: \(indexPath.row + 1)")
-            self.context.delete(self.itemArray[indexPath.row])
-            self.itemArray.remove(at: indexPath.row)
-            self.saveItems()
-            completionHandler(true)
+//            self.context.delete(self.itemArray[indexPath.row])
+//            self.itemArray.remove(at: indexPath.row)
+//            self.saveItems()
+            if let item = self.itemArrayRealm?[indexPath.row] {
+                do {
+                    try self.realm.write({
+                        self.realm.delete(item)
+                    })
+                } catch let error as NSError{
+                    print("Error deleting item realm data, \(error)")
+                }
+                completionHandler(true)
+            }
+            tableView.reloadData()
         }
         delete.image = UIImage(systemName: "trash")
         delete.backgroundColor = .red
