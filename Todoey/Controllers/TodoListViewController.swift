@@ -169,6 +169,7 @@ class TodoListViewController: UITableViewController {
                         let newItemRealm = ItemRealm()
                         newItemRealm.title = text
                         newItemRealm.done = false
+                        newItemRealm.createDate = Date()
                         currentCategory.items.append(newItemRealm)
                     })
                 } catch {
@@ -238,20 +239,24 @@ class TodoListViewController: UITableViewController {
 
 extension TodoListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        print(searchBar.text!)
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        
-        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
-        
-        request.sortDescriptors = [sortDescriptor]
-        
-        loadItems(with: request, predicate: predicate)
+        itemArrayRealm = itemArrayRealm?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "createDate",ascending: true)
+        tableView.reloadData()
+//        let request : NSFetchRequest<Item> = Item.fetchRequest()
+//        print(searchBar.text!)
+//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+//
+//        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+//
+//        request.sortDescriptors = [sortDescriptor]
+//
+//        loadItems(with: request, predicate: predicate)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
-            loadItems()
+//            loadItems()
+            itemArrayRealm = realm.objects(ItemRealm.self)
+            tableView.reloadData()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
