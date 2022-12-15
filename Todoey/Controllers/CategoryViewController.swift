@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import RealmSwift
+import SwipeCellKit
 
 class CategoryViewController: UITableViewController {
     
@@ -104,9 +105,19 @@ class CategoryViewController: UITableViewController {
         let delete = UIContextualAction(style: .normal, title: "Delete") { [weak self] action, view, completionHandler in
             guard let self = self else { return }
             print("Delete: \(indexPath.row + 1)")
-            self.context.delete(self.categories[indexPath.row])
-            self.categories.remove(at: indexPath.row)
-            self.saveCategories()
+            if let category = self.categoriesRealm?[indexPath.row] {
+                do {
+                    try self.realm.write({
+                        self.realm.delete(category)
+                    })
+                } catch {
+                    print("Error deleting category, \(error)")
+                }
+            }
+//            self.context.delete(self.categories[indexPath.row])
+//            self.categories.remove(at: indexPadth.row)
+//            self.saveCategories()
+            tableView.reloadData()
             completionHandler(true)
         }
         
