@@ -4,19 +4,23 @@ PODS:
   - Realm/Headers (10.33.0)
   - RealmSwift (10.33.0):
     - Realm (= 10.33.0)
+  - SwipeCellKit (2.7.1)
 
 DEPENDENCIES:
   - RealmSwift (~> 10)
+  - SwipeCellKit
 
 SPEC REPOS:
   trunk:
     - Realm
     - RealmSwift
+    - SwipeCellKit
 
 SPEC CHECKSUMS:
   Realm: d4f810e161fa2c2c589b9860b6eb09238deacd73
   RealmSwift: cef9946f09f2333a8f2ac8bac4f8de52fb9f5ac3
+  SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
 
-PODFILE CHECKSUM: f279266e0a830326afdb2baf11a9897f29719aec
+PODFILE CHECKSUM: 36eabec127d569f0dc9f110dbc20a8863f5d066e
 
 COCOAPODS: 1.11.2
