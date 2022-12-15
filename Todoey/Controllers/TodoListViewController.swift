@@ -8,13 +8,23 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 class TodoListViewController: UITableViewController {
     
+    let realm = try! Realm()
+    
     var itemArray  = [Item]()
+    var itemArrayRealm: Results<ItemRealm>?
     var selectedCategory : Category? {
         didSet {
             loadItems()
+        }
+    }
+    
+    var selectedCategoryRealm: CategoryRealm? {
+        didSet {
+            loadItemsRealm()
         }
     }
     let defaults = UserDefaults.standard
@@ -32,16 +42,17 @@ class TodoListViewController: UITableViewController {
     //MARK: Tableview Datsource Method
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return itemArrayRealm?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        let item = itemArray[indexPath.row]
-
-        cell.textLabel?.text = item.title
-        
-        cell.accessoryType = item.done ? .checkmark : .none
+        if let item = itemArrayRealm?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.done ? .checkmark : .none
+        } else {
+            cell.textLabel?.text = "No Items Added"
+        }
         
         return cell
     }
@@ -132,12 +143,24 @@ class TodoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { action in
             guard let text = textField.text else { return }
-            let newItem = Item(context: self.context)
-            newItem.title = text
-            newItem.done = false
-            newItem.parentCategory = self.selectedCategory
-            self.itemArray.append(newItem)
-            self.saveItems()
+            if let currentCategory = self.selectedCategoryRealm {
+                do {
+                    try self.realm.write({
+                        let newItemRealm = ItemRealm()
+                        newItemRealm.title = text
+                        newItemRealm.done = false
+                        currentCategory.items.append(newItemRealm)
+                    })
+                } catch {
+                    print("Error saving itemRealm, \(error)")
+                }
+            }
+//            let newItem = Item(context: self.context)
+//            newItem.title = text
+//            newItem.done = false
+//            newItem.parentCategory = self.selectedCategory
+//            self.itemArray.append(newItem)
+//            self.saveItems()
             self.tableView.reloadData()
         }
         alert.addTextField { alertTextField in
@@ -182,6 +205,11 @@ class TodoListViewController: UITableViewController {
             print("Error fetching data \(error)")
         }
         self.tableView.reloadData()
+    }
+    
+    func loadItemsRealm() {
+        itemArrayRealm = selectedCategoryRealm?.items.sorted(byKeyPath: "title")
+        tableView.reloadData()
     }
     
 }
