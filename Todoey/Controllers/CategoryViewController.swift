@@ -9,9 +9,8 @@
 import UIKit
 import CoreData
 import RealmSwift
-import SwipeCellKit
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -52,8 +51,9 @@ class CategoryViewController: UITableViewController {
         return categoriesRealm?.count ?? 1
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
 //        cell.textLabel?.text = categories[indexPath.row].name
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categoriesRealm?[indexPath.row].name ?? "No Categories Added"
         
         return cell
@@ -96,37 +96,48 @@ class CategoryViewController: UITableViewController {
         categoriesRealm = realm.objects(CategoryRealm.self)
         tableView.reloadData()
     }
-
     
+    override func updateModel(at indexPath: IndexPath) {
+
+        if let category = self.categoriesRealm?[indexPath.row] {
+            do {
+                try self.realm.write({
+                    self.realm.delete(category)
+                })
+            } catch {
+                print("Error deleting category, \(error)")
+            }
+        }
+    }
     //MARK: -TableView Delegate Methods
         
-    //Trailing Swipe
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: .normal, title: "Delete") { [weak self] action, view, completionHandler in
-            guard let self = self else { return }
-            print("Delete: \(indexPath.row + 1)")
-            if let category = self.categoriesRealm?[indexPath.row] {
-                do {
-                    try self.realm.write({
-                        self.realm.delete(category)
-                    })
-                } catch {
-                    print("Error deleting category, \(error)")
-                }
-            }
-//            self.context.delete(self.categories[indexPath.row])
-//            self.categories.remove(at: indexPadth.row)
-//            self.saveCategories()
-            tableView.reloadData()
-            completionHandler(true)
-        }
-        
-        delete.image = UIImage(systemName: "trash")
-        delete.backgroundColor = .red
-        
-        let swipe = UISwipeActionsConfiguration(actions: [delete])
-        return swipe
-    }
+//    //Trailing Swipe
+//    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let delete = UIContextualAction(style: .normal, title: "Delete") { [weak self] action, view, completionHandler in
+//            guard let self = self else { return }
+//            print("Delete: \(indexPath.row + 1)")
+//            if let category = self.categoriesRealm?[indexPath.row] {
+//                do {
+//                    try self.realm.write({
+//                        self.realm.delete(category)
+//                    })
+//                } catch {
+//                    print("Error deleting category, \(error)")
+//                }
+//            }
+////            self.context.delete(self.categories[indexPath.row])
+////            self.categories.remove(at: indexPadth.row)
+////            self.saveCategories()
+//            tableView.reloadData()
+//            completionHandler(true)
+//        }
+//
+//        delete.image = UIImage(systemName: "trash")
+//        delete.backgroundColor = .red
+//
+//        let swipe = UISwipeActionsConfiguration(actions: [delete])
+//        return swipe
+//    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "goToItems", sender: self)

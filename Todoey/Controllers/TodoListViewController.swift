@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -77,49 +77,49 @@ class TodoListViewController: UITableViewController {
     }
     
     // Trailing Swipe
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        // delete
-        let delete = UIContextualAction(style: .normal, title: "Delete") {[weak self] action, view, completionHandler in
-            guard let self = self else { return }
-            print("Delete: \(indexPath.row + 1)")
-//            self.context.delete(self.itemArray[indexPath.row])
-//            self.itemArray.remove(at: indexPath.row)
-//            self.saveItems()
-            if let item = self.itemArrayRealm?[indexPath.row] {
-                do {
-                    try self.realm.write({
-                        self.realm.delete(item)
-                    })
-                } catch let error as NSError{
-                    print("Error deleting item realm data, \(error)")
-                }
-                completionHandler(true)
-            }
-            tableView.reloadData()
-        }
-        delete.image = UIImage(systemName: "trash")
-        delete.backgroundColor = .red
-        
-        //share
-        let share = UIContextualAction(style: .normal, title: "Share", handler: { action, view, completionHandler in
-            print("Share: \(indexPath.row + 1) ")
-            completionHandler(true)
-        })
-        share.image = UIImage(systemName: "square.and.arrow.up")
-        share.backgroundColor = .blue
-        
-        //download
-        let download = UIContextualAction(style: .normal, title: "Download") { action, view, completionHandler in
-            print("Download: \(indexPath.row + 1)")
-            completionHandler(true)
-        }
-        download.image = UIImage(systemName: "arrow.down")
-        download.backgroundColor = .green
-        
-        let swipe = UISwipeActionsConfiguration(actions: [delete, share, download])
-        
-        return swipe
-    }
+//    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        // delete
+//        let delete = UIContextualAction(style: .normal, title: "Delete") {[weak self] action, view, completionHandler in
+//            guard let self = self else { return }
+//            print("Delete: \(indexPath.row + 1)")
+////            self.context.delete(self.itemArray[indexPath.row])
+////            self.itemArray.remove(at: indexPath.row)
+////            self.saveItems()
+//            if let item = self.itemArrayRealm?[indexPath.row] {
+//                do {
+//                    try self.realm.write({
+//                        self.realm.delete(item)
+//                    })
+//                } catch let error as NSError{
+//                    print("Error deleting item realm data, \(error)")
+//                }
+//                completionHandler(true)
+//            }
+//            tableView.reloadData()
+//        }
+//        delete.image = UIImage(systemName: "trash")
+//        delete.backgroundColor = .red
+//
+//        //share
+//        let share = UIContextualAction(style: .normal, title: "Share", handler: { action, view, completionHandler in
+//            print("Share: \(indexPath.row + 1) ")
+//            completionHandler(true)
+//        })
+//        share.image = UIImage(systemName: "square.and.arrow.up")
+//        share.backgroundColor = .blue
+//
+//        //download
+//        let download = UIContextualAction(style: .normal, title: "Download") { action, view, completionHandler in
+//            print("Download: \(indexPath.row + 1)")
+//            completionHandler(true)
+//        }
+//        download.image = UIImage(systemName: "arrow.down")
+//        download.backgroundColor = .green
+//
+//        let swipe = UISwipeActionsConfiguration(actions: [delete, share, download])
+//
+//        return swipe
+//    }
     
     //Leading Swipe
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -261,7 +261,6 @@ extension TodoListViewController: UISearchBarDelegate {
             }
         }
     }
+    
+    
 }
-
-
-
