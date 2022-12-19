@@ -46,7 +46,7 @@ class TodoListViewController: SwipeTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = itemArrayRealm?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
@@ -76,6 +76,17 @@ class TodoListViewController: SwipeTableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = self.itemArrayRealm?[indexPath.row] {
+            do {
+                try self.realm.write({
+                    self.realm.delete(item)
+                })
+            } catch let error as NSError{
+                print("Error deleting item realm data, \(error)")
+            }
+        }
+    }
     // Trailing Swipe
 //    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 //        // delete
