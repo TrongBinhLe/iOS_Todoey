@@ -28,12 +28,28 @@ class TodoListViewController: SwipeTableViewController {
             loadItemsRealm()
         }
     }
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     let defaults = UserDefaults.standard
 //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        if let colourHex = selectedCategoryRealm?.colour {
+            title = selectedCategoryRealm!.name
+            guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist.")}
+            if let navBarColour = (UIColor(hexString: colourHex)) {
+                navBar.backgroundColor = navBarColour
+                navBar.tintColor = ContrastColorOf(navBarColour, returnFlat: true)
+                navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColour, returnFlat: true)]
+                searchBar.barTintColor = navBarColour
+            }
+            
+        }
     }
     
     override func didReceiveMemoryWarning() {

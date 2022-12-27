@@ -24,6 +24,13 @@ class CategoryViewController: SwipeTableViewController {
 //        loadCategories()
         loadCategoriesRealm()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("Navigation controller does not exits")
+        }
+        navBar.backgroundColor = UIColor(hexString: "1D9BF6")
+    }
 
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -56,10 +63,13 @@ class CategoryViewController: SwipeTableViewController {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
 //        cell.textLabel?.text = categories[indexPath.row].name
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
-        cell.textLabel?.text = categoriesRealm?[indexPath.row].name ?? "No Categories Added"
-        cell.backgroundColor = UIColor(hexString: categoriesRealm?[indexPath.row].colour ?? "12FF10")
-        
-        return cell
+        if let category = categoriesRealm?[indexPath.row] {
+            cell.textLabel?.text = category.name
+            guard let categoryColour = UIColor(hexString: category.colour) else { fatalError()}
+            cell.textLabel?.textColor = ContrastColorOf(categoryColour, returnFlat: true)
+            cell.backgroundColor = UIColor(hexString: category.colour)
+        }
+         return cell
     }
     
     //MARK: - Data Manipulation Mothods

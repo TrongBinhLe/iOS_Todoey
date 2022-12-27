@@ -66,12 +66,14 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Items" id="S2T-FI-jga">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="KSP-UI-HRT">
-                            <color key="tintColor" systemColor="tertiarySystemBackgroundColor"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="7KE-mH-pT1" id="eIc-P9-Ayy"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="searchBar" destination="5X6-Kg-Srd" id="ypk-Jp-TIs"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7YT-GP-Wbo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -123,9 +125,6 @@
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="tertiarySystemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>
